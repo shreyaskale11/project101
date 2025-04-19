@@ -48,7 +48,9 @@ def build_context(max_turns: int = 3) -> str:
     This string can be sent to the LLM / API so it preserves minimal context
     without hitting token limits.
     """
-    msgs = st.session_state.messages[-2 * max_turns :]
+    if not st.session_state.messages:
+        return ""
+    msgs = (st.session_state.get("messages") or [])[-2 * max_turns :]
     lines = []
     for m in msgs:
         role = "USER" if m["role"] == "user" else "ASSISTANT"
