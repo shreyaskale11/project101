@@ -84,10 +84,10 @@ def fetch_research(query: str,context: str) -> Dict[str, Any]:
 # ---------- DATABASE UTILS -----------------------------------------
 
 def get_or_create_user(email: str, auth_id: str) -> int:
-    resp = supabase.table("users").select("id").eq("auth_id", auth_id).execute()
+    resp = supabase.table("users").select("id").eq("auth_id", auth_id).eq("status", "active").execute()
     if resp.data:
         return resp.data[0]["id"]
-    ins = supabase.table("users").insert({"auth_id": auth_id, "email": email}).execute()
+    ins = supabase.table("users").insert({"auth_id": auth_id, "email": email,"status": "active"}).execute()
     return ins.data[0]["id"]
 
 
@@ -131,6 +131,7 @@ def load_messages(conv_id: int) -> List[Dict[str, str]]:
         supabase.table("messages")
         .select("role, content, created_at")
         .eq("conversation_id", conv_id)
+        .eq("status", "active")
         .order("created_at")
         .execute()
     )
